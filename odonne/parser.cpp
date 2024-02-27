@@ -92,6 +92,43 @@ bool Parser::parseIdentifierWithOperator() {
     return true;
 }
 
+// scan every identifier, if (not declared | var token not behind it) = then there is an error
+// @param   null
+// @return  true    ~ all identifiers were declared with var
+// @return  false   ~ NOT all identifiers were declared with var
+bool Parser::parseVar() {
+    // iterate through all tokens
+    for (long unsigned int i = 0; i < tokens.size(); i++) {
+        // if current token is an 'identifier'
+        if (tokens.at(i).tokenType == "idenSym") {
+            // if iden has 'var' behind it: it's valid and remains valid
+            if (tokens.at(i-1).tokenType == "varSym"){
+                // find all identifiers with this name and set them as declared
+                for (long unsigned int j = 0; j < tokens.size(); j++) {
+                    if (tokens.at(j).lexeme == tokens.at(i).lexeme) {
+                        tokens.at(j).declared = true;
+                    }
+                }
+            }
+        }
+    }
+
+    // iterate through all tokens
+    for (long unsigned int i = 0; i < tokens.size(); i++) {
+        // if current token is an 'identifier'
+        if (tokens.at(i).tokenType == "idenSym") {
+            // if var token is not behind it, or not declared: error
+            if (tokens.at(i).declared == false) {
+                std::cout << tokens.at(i).declared << std::endl;
+                std::cout << "Error: Identifier \"" << tokens.at(i).lexeme << "\" on line: " << tokens.at(i).lineNumber << ", was not declared" << std::endl;;
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 // first token in vector must be the begin-token (and spelled right)
 // @param   null
 // @return  true    ~ first token (IS begin | spelled right)
@@ -109,7 +146,7 @@ bool Parser::parseBegin() {
 // @param   null
 // @return  void
 void Parser::parse() {
-    if (parseParen() && parseIdentifier() && parseIdentifierWithOperator() && parseBegin()) std::cout << "success! No errors found by parser." << std::endl;
+    if (parseParen() && parseIdentifier() && parseIdentifierWithOperator() && parseVar() && parseBegin()) std::cout << "success! No errors found by parser." << std::endl;
 }
 
 // iteratire through 'tokens' and print information to terminal

@@ -5,6 +5,7 @@ struct Token {
     std::string lexeme;
     std::string tokenType;
     int lineNumber;
+    bool declared = false;
 };
 
 #endif
