@@ -160,6 +160,39 @@ bool Scanner::scanIdentifier(long unsigned int& currentLocation) {
     return false;
 }
 
+// if char at 'currentLocation' builds the 'var' keyword
+// @param   ...int& currentLocation  ~ the (iterator | i) value from a for loop, a for loop iterating through a string
+// @return  true                     ~ the (iterator | i) IS part of the 'var' lexeme
+// @return  false                    ~ the (iterator | i) IS NOT part of the 'var' lexeme
+bool Scanner::scanVar(long unsigned int& currentLocation, int depth) {
+    // if current location is 'v'
+        // -> if next location is 'a'
+            // -> if last location is 'r'
+                // -> create var token, return true, collapse recursive stack, and subtract currentLocation by 1
+    // if any return false, collapse stack, do not make var token, do not change currentLocation
+
+    if (currentLocation < currentLine.length() && ((currentLine[currentLocation] == 'v') && (depth == 0))) {
+        currentLocation += 1;
+        return scanVar(currentLocation, ++depth); // go to next character and increase depth
+    } else if (currentLocation < currentLine.length() && ((currentLine[currentLocation] == 'a') && (depth == 1))) {
+        currentLocation += 1;
+        return scanVar(currentLocation, ++depth); // go to next character and increase depth
+    } else if (currentLocation < currentLine.length() && ((currentLine[currentLocation] == 'r') && (depth == 2))) {
+        // create var token
+        Token temp;
+        temp.tokenType   = "varSym";
+        temp.lexeme      = "var";
+        temp.lineNumber  = totalLines;
+        //currentLocation -= 1;
+        tokens.push_back(temp);
+        return true;
+    } else {
+        return false;
+    }
+
+    return false;
+}
+
 // if a digit is encountered at the 'currentLocation' of our string, it is assumed to be a digit
 // @param   ...int& currentLocation     ~ the (iterator | i) value from a for loop, a for loop iterating through a string
 // @return  true                        ~ the char at 'currentLocation' was a digit
@@ -322,11 +355,17 @@ void Scanner::scan() {
                 continue;
             } else if (scanNumber(i)) {
                 continue;
-            } else if (isalpha(currentLine[i])) {
+            } else if (scanVar(i, 0)) {
+                continue;
+            }
+            else if (isalpha(currentLine[i])) {
                 scanIdentifier(i);
             }
         }
     }
+
+    // print all tokens after scanner finishes, comment out if not needed
+    printTokens();
 }
 
 // function the programmer uses for debugging
