@@ -13,10 +13,17 @@
 
 #include "parser.h"
 
+// param constructor
+// @param   vector<Token> tokens    ~ vector containing all tokens collected by the (scanner.cpp & scanner.h) program
+// @return  void
 Parser::Parser(std::vector<Token> tokens) {
     this->tokens = tokens;
 }
 
+// check how many left parens match right parens
+// @param   null
+// @return  true    ~ left parens  = right parens
+// @return  false   ~ left parens != right parens
 bool Parser::parseParen() {
     int lParen = 0, rParen = 0;
 
@@ -35,6 +42,10 @@ bool Parser::parseParen() {
     return true;
 }
 
+// ensure that all identifier-tokens are legal
+// @param   null
+// @return  true    ~ current identifier-token is legal
+// @return  false   ~ current identifier-token is NOT legal
 bool Parser::parseIdentifier() {
     // for every token in the vector
     for (long unsigned int i = 0; i < tokens.size(); i++) {
@@ -56,6 +67,10 @@ bool Parser::parseIdentifier() {
     return true;
 }
 
+// ensure that once a identifier-token is seen, it is followed by a operator-token
+// @param   null
+// @return  true    ~ identifier DOES have operator ahead of it
+// @return  false   ~ identifier DOES NOT have operator ahead of it
 bool Parser::parseIdentifierWithOperator() {
     // Iterate through tokens, skipping the last one
     for (long unsigned int i = 0; i < tokens.size() - 1; i++) {
@@ -77,6 +92,10 @@ bool Parser::parseIdentifierWithOperator() {
     return true;
 }
 
+// first token in vector must be the begin-token (and spelled right)
+// @param   null
+// @return  true    ~ first token (IS begin | spelled right)
+// @return  false   ~ first token (IS NOT begin | spelled wrong)
 bool Parser::parseBegin() {
     // if the first token isn't 'begin', then flag it
     if (tokens.at(0).tokenType != "beginSym") {
@@ -86,10 +105,16 @@ bool Parser::parseBegin() {
     return true;
 }
 
+// run all 'parse*' functions
+// @param   null
+// @return  void
 void Parser::parse() {
     if (parseParen() && parseIdentifier() && parseIdentifierWithOperator() && parseBegin()) std::cout << "success! No errors found by parser." << std::endl;
 }
 
+// iteratire through 'tokens' and print information to terminal
+// @param   null
+// @return  void
 void Parser::printTokens() {
     std::cout << "Size of Vector: " << tokens.size() << std::endl;
     for (long unsigned int i = 0; i < tokens.size(); i++) {

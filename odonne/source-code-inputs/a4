@@ -1,5 +1,7 @@
 begin
-a = b+c+d+e+f+ghijk;
+var a, b, c, hello;
+var b;
+a = b;
 a = b+2;
 b = (c+hello) * (a - 5);
 end.

@@ -2,7 +2,8 @@
 ~ it actually has two comments ...
 
 begin
-  a = b+c+d+e+f+ghijk;
-b = ((c+hello) * (a - 5))*(e_tt-45678);
+  var a_sdf,b,c,d,e,f,ghijk,hello;
+  a_sdf = b+c+d+e+f+ghijk;
+  b (c+hello) * (a - 5);
 end.
 

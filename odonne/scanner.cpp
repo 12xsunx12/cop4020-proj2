@@ -14,6 +14,8 @@
 #include "scanner.h"
 
 // default constructor
+// @param null
+// @return void
 Scanner::Scanner() {
     this->fileName = "";
     totalLines = 0;
@@ -21,12 +23,18 @@ Scanner::Scanner() {
 }
 
 // param constructor
+// @param string fileName ~ name of the source code file that will be scanned & parsed
+// @return void
 Scanner::Scanner(std::string fileName) {
     this->fileName = fileName;
     totalLines = 0;
     initAll();
 }
 
+// initializes the 'inputFileStream ifs' with the 'fileName' variable
+// @param null
+// @return true   ~ the file WAS successfully opened
+// @return false  ~ the file WAS NOT successfully opened
 bool Scanner::openFile() {
     ifs.open(fileName);
     if (!ifs.is_open()) {
@@ -36,6 +44,22 @@ bool Scanner::openFile() {
     return true;
 }
 
+// initializes the 'inputFileStream ifs' with the 'fileName' variable
+// @param  string fileName  ~ name of the source-code file
+// @return true             ~ the file WAS successfully opened
+// @return false            ~ the file WAS NOT successfully opened
+bool Scanner::openFile(std::string fileName) {
+    ifs.open(fileName);
+    if (!ifs.is_open()) {
+        std::cout << "Error: file doesn't exist or couldn't be opened" << std::endl;
+        return false;
+    }
+    return true;
+}
+
+// grabs and sets the next line in the given source-code-file, given source-code file is 'fileName'
+// @param null
+// @return void
 void Scanner::nextLine() {
     std::string temp;
     std::getline(ifs, temp);
@@ -43,6 +67,9 @@ void Scanner::nextLine() {
     totalLines++;
 }
 
+// removes all white-spaces and new-lines from a string input, returns the 'cleaned' string (also uses pass-by-reference)
+// @param const string& input  ~ string to be cleaned of white-spaces & new-lines
+// @return result              ~ original string, but now with no white-spaces & new-lines
 std::string Scanner::clean(const std::string& input) {
     std::string result = input;
 
@@ -55,16 +82,19 @@ std::string Scanner::clean(const std::string& input) {
     return result;
 }
 
+// scan current character 'currentLocation' and return (true | false) if (that input can be found inside the 'opTable' hash-map)
+// @param  ...int& currentLocation   ~ the (iterator | i) value from a for loop, a for loop iterating through a string
+// @return true                      ~ the characer located at (currentLocation | i | iterator) CAN be found inside the 'opTable'
+// @return false                     ~ the characer located at (currentLocation | i | iterator) CAN NOT be found inside the 'opTable'
 bool Scanner::scanOp(long unsigned int& currentLocation) {
     char tempChar = currentLine[currentLocation];
 
-    // check if the current location is any of the operators
+    // opTable.count ~ return a count for everytime the input was found in the table
     if (opTable.count(tempChar) > 0) {
-        // Create token
         Token temp;
         temp.tokenType = opTable[tempChar];
         temp.lexeme = tempChar;
-        temp.lineNumber = totalLines; // figure this out later @regan
+        temp.lineNumber = totalLines;
         tokens.push_back(temp);
         return true;
     } else {
@@ -72,28 +102,38 @@ bool Scanner::scanOp(long unsigned int& currentLocation) {
     }
 }
 
+// scan current character 'currentLocation' and return (true | false) if (that input can be found inside the 'keywordTable' hash-map)
+// @param  ...int& currentLocation   ~ the (iterator | i) value from a for loop, a for loop iterating through a string
+// @return true                      ~ the created sub-string WAS FOUND inside the 'keywordTable'
+// @return false                     ~ the created sub-string WAS NOT FOUND inside the 'keywordTable'
 bool Scanner::scanKeyword(long unsigned int& currentLocation) {
-    // Scan for keywords starting from the current location
+    // all keywords in table are less than or equal to 6 characters
     for (int len = 1; len <= 6; len++) {
-        // Check if there are enough characters remaining to form a keyword of length 'len'
+        // check if there are enough characters remaining to form a keyword of length 'len'
         if (currentLocation + len <= currentLine.length()) {
+            // build sub-string (from currentLine) of the next 'len' characters
             std::string tempStr = currentLine.substr(currentLocation, len);
+            // opTable.count ~ return a count for everytime the input was found in the table
             if (keywordTable.count(tempStr) > 0) {
-                // Create token for the keyword
+                // create token
                 Token temp;
                 temp.tokenType = keywordTable[tempStr];
                 temp.lexeme = tempStr;
                 temp.lineNumber = totalLines;
                 tokens.push_back(temp);
-                // Move the current location to the end of the matched keyword
+                // move the current location to the end of the matched keyword
                 currentLocation += len - 1;
                 return true;
             }
         }
     }
-    return false; // No keyword found
+    return false; // no keyword found
 }
 
+// inside main, if all scan-related-functions return false, we can assume that our 'currentLocation' involves an identifier
+// @param   ...int& currentLocation  ~ the (iterator | i) value from a for loop, a for loop iterating through a string
+// @return  true                     ~ the created 'tempStr' is an identifier
+// @return  false                    ~ the created 'tempStr' is NOT an identifier
 bool Scanner::scanIdentifier(long unsigned int& currentLocation) {
     std::string tempStr;
     int idenLength = 0;
@@ -105,7 +145,7 @@ bool Scanner::scanIdentifier(long unsigned int& currentLocation) {
 
         // Check if the next character is an operator or if we have reached the end of the line
         if (!isalnum(currentLine[currentLocation + idenLength]) && (currentLine[currentLocation + idenLength]) != '_') {
-            // Create token for the identifier
+            // create token for the identifier
             Token temp;
             temp.tokenType = "idenSym";
             temp.lexeme = tempStr;
@@ -120,6 +160,10 @@ bool Scanner::scanIdentifier(long unsigned int& currentLocation) {
     return false;
 }
 
+// if a digit is encountered at the 'currentLocation' of our string, it is assumed to be a digit
+// @param   ...int& currentLocation     ~ the (iterator | i) value from a for loop, a for loop iterating through a string
+// @return  true                        ~ the char at 'currentLocation' was a digit
+// @return  false                       ~ the char at 'currentLocation' was NOT part of a digit
 bool Scanner::scanNumber(long unsigned int& currentLocation) {
     std::string tempStr;
     long unsigned int numStart = currentLocation; // Store the start index of the number
@@ -150,6 +194,9 @@ bool Scanner::scanNumber(long unsigned int& currentLocation) {
     }
 }
 
+// run all 'init*' functions
+// @param   null
+// @return  void
 void Scanner::initAll() {
     initOpTable();
     initKeywordTable();
@@ -157,6 +204,9 @@ void Scanner::initAll() {
     initDigits();
 }
 
+// initialize the operand hash-table
+// @param   null
+// @return  void
 void Scanner::initOpTable() {
     opTable['(']    = "lParen";
     opTable[')']    = "rParen";
@@ -171,6 +221,9 @@ void Scanner::initOpTable() {
     opTable['=']    = "equalSym";
 }
 
+// initialize the keyword hash-table
+// @param   null
+// @return  void
 void Scanner::initKeywordTable() {
     keywordTable["while"]    = "whileSym";
     keywordTable["return"]   = "returnSym";
@@ -183,6 +236,9 @@ void Scanner::initKeywordTable() {
     keywordTable["end."]     = "endSym";
 }
 
+// initialize the ALPHABET set
+// @param   null
+// @return  void
 void Scanner::initAlphabet() {
     // all lower case letters
     for (int i = 'a'; i < 'z'; i++){
@@ -195,6 +251,9 @@ void Scanner::initAlphabet() {
     }
 }
 
+// initialize the DIGIT set
+// @param   null
+// @return  void
 void Scanner::initDigits() {
     // all digits 0-9
     for (int i = 0; i < 10; i++){
@@ -202,26 +261,44 @@ void Scanner::initDigits() {
     }
 }
 
+// return 'fileName'
+// @param   null
+// @return  string fileName
 std::string Scanner::getFileName() {
     return this->fileName;
 }
 
+// return 'currentLine'
+// @param   null
+// @return  string currentLine
 std::string Scanner::getCurrentLine() {
     return this->currentLine;
 }
 
+// return a vector containing all tokens
+// @param   null
+// @return  vector<Token> tokens
 std::vector<Token> Scanner::getTokens() {
     return this->tokens;
 }
 
+// set the 'fileName'
+// @param   string a
+// @return  void
 void Scanner::setFileName(std::string a){
     this->fileName = a;
 }
 
+// set the 'currentLine'
+// @param   string a
+// @return  void
 void Scanner::setCurrentLine(std::string a) {
     this->currentLine = a;
 }
 
+// open source-code file, scan over every char, create tokens using 'scan*' functions
+// @param   null
+// @return  void
 void Scanner::scan() {
     // open the file
     openFile(fileName);
@@ -233,10 +310,12 @@ void Scanner::scan() {
 
         // begin iterating over every character in the string and feeding it into subsequent, more logical, scanner functions, that check for edge-cases
         for (long unsigned int i = 0; i < currentLine.length(); i++) {
+            // skips over any comments
             if (currentLine.find('~') != std::string::npos) {
                 break;
             }
 
+            // the actual 'scanning' part
             if (scanKeyword(i)) {
                 continue;
             } else if (scanOp(i)) {
@@ -250,20 +329,17 @@ void Scanner::scan() {
     }
 }
 
+// function the programmer uses for debugging
+// @param   null
+// @return  void
 void Scanner::test() {
     scan();
     printTokens();
 }
 
-bool Scanner::openFile(std::string fileName) {
-    ifs.open(fileName);
-    if (!ifs.is_open()) {
-        std::cout << "Error: file doesn't exist or couldn't be opened" << std::endl;
-        return false;
-    }
-    return true;
-}
-
+// iterate through 'tokens' and print all token info to terminal
+// @param   null
+// @return  void
 void Scanner::printTokens() {
     std::cout << "Size of Vector: " << tokens.size() << std::endl;
     for (long unsigned int i = 0; i < tokens.size(); i++) {

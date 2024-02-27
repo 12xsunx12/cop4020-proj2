@@ -1,5 +1,6 @@
 begin
-  a_ = b;
+  var a; int b;
+  a = b;
   a = b+2;
 end.
 

@@ -42,6 +42,7 @@ class Scanner {
         bool scanKeyword(long unsigned int& currentLocation);       // current lexeme is a keyword
         bool scanIdentifier(long unsigned int& currentLocation);    // current lexeme is an identifier
         bool scanNumber(long unsigned int& currentLocation);        // current lexeme is a number
+        bool scanVar(long unsigned int& currentLocation);           // current lexeme is the 'var' initializer
 
         void initAll();             // run all `init` functions
         void initOpTable();         // init. the opTable hashmap
