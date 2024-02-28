@@ -98,15 +98,21 @@ bool Parser::parseIdentifierWithOperator() {
 // @return  true    ~ all identifiers were declared with var
 // @return  false   ~ NOT all identifiers were declared with var
 bool Parser::parseVar() {
-    // iterate through all tokens
+    bool success = true;
+
+    // iterate through all tokens and declare them
     for (long unsigned int i = 0; i < tokens.size(); i++) {
-        // if current token is an 'identifier'
+        if (tokens.at(i).tokenType == "varSym") {
+            return parseVarHelper(i, 0);
+        }
+    }
+
+    // iterate through all tokens (past i), and set the same identifiers as declared if they exist else-where
+    for (long unsigned int i = 0; i < tokens.size(); i++) {
         if (tokens.at(i).tokenType == "idenSym") {
-            // if iden has 'var' behind it: it's valid and remains valid
-            if (tokens.at(i-1).tokenType == "varSym"){
-                // find all identifiers with this name and set them as declared
-                for (long unsigned int j = 0; j < tokens.size(); j++) {
-                    if (tokens.at(j).lexeme == tokens.at(i).lexeme) {
+            if (tokens.at(i).declared == true) {
+                for (int j = i; j < tokens.size(); j++) {
+                    if (tokens.at(j).lexeme == tokens.at(i).lexeme){
                         tokens.at(j).declared = true;
                     }
                 }
@@ -114,19 +120,35 @@ bool Parser::parseVar() {
         }
     }
 
-    // iterate through all tokens
+    // finally, iterate through the list again and flag all identifiers that are not declared
     for (long unsigned int i = 0; i < tokens.size(); i++) {
-        // if current token is an 'identifier'
         if (tokens.at(i).tokenType == "idenSym") {
-            // if var token is not behind it, or not declared: error
             if (tokens.at(i).declared == false) {
-                std::cout << "Error: Identifier \"" << tokens.at(i).lexeme << "\" on line: " << tokens.at(i).lineNumber << ", was not declared" << std::endl;;
-                return false;
+                std::cout << "Error: Identifier, \"" << tokens.at(i).lexeme << "\" was not declared with \"var\" on line: " << tokens.at(i).lineNumber << std::endl;
+                success = false;
             }
         }
     }
 
-    return true;
+    if (success){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Parser::parseVarHelper(long unsigned int currentI, int depth) {
+    // if next line is an identifier or a comma, it is declared
+        // -> continue to next identifier, or eol
+    currentI += 1;
+    if (currentI > tokens.size() || tokens.at(currentI).tokenType == "semi") {
+        return true;
+    } else if (tokens.at(currentI).tokenType == "idenSym" || tokens.at(currentI).tokenType == "comma") {
+        tokens.at(currentI).declared = true;
+        return parseVarHelper(currentI, ++depth);
+    } else {
+        return false;
+    }
 }
 
 // first token in vector must be the begin-token (and spelled right)

@@ -29,6 +29,7 @@ class Parser {
         bool parseIdentifier();     // checks for unacceptable identifier naming schemes
         bool parseIdentifierWithOperator();
         bool parseVar();            // checks that all identifiers were declared with var
+        bool parseVarHelper(long unsigned int a, int b);      // recursive descent function that checks for identifiers after a var token
         bool parseBegin();          // checks for proper expressions
 
     public:
