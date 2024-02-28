@@ -83,7 +83,8 @@ bool Parser::parseIdentifierWithOperator() {
                 tokens.at(i + 1).tokenType != "multSym" &&
                 tokens.at(i + 1).tokenType != "divSym" &&
                 tokens.at(i + 1).tokenType != "semi" &&
-                tokens.at(i + 1).tokenType != "rParen") {
+                tokens.at(i + 1).tokenType != "rParen" &&
+                tokens.at(i + 1).tokenType != "comma"){
                 std::cout << "Error: Identifier not followed by a valid operator " << "Line: " << tokens.at(i).lineNumber << "\tIdentifier: " << tokens.at(i).lexeme << std::endl;
                 return false;
             }
@@ -119,7 +120,6 @@ bool Parser::parseVar() {
         if (tokens.at(i).tokenType == "idenSym") {
             // if var token is not behind it, or not declared: error
             if (tokens.at(i).declared == false) {
-                std::cout << tokens.at(i).declared << std::endl;
                 std::cout << "Error: Identifier \"" << tokens.at(i).lexeme << "\" on line: " << tokens.at(i).lineNumber << ", was not declared" << std::endl;;
                 return false;
             }
@@ -146,7 +146,16 @@ bool Parser::parseBegin() {
 // @param   null
 // @return  void
 void Parser::parse() {
-    if (parseParen() && parseIdentifier() && parseIdentifierWithOperator() && parseVar() && parseBegin()) std::cout << "success! No errors found by parser." << std::endl;
+    bool badCode = true;
+    if (!parseParen())                      badCode = false;
+    if (!parseIdentifier())                 badCode = false;
+    if (!parseIdentifierWithOperator())     badCode = false;
+    if (!parseVar())                        badCode = false;
+    if (!parseBegin())                      badCode = false;
+
+    if (badCode) {
+        std::cout << "success! No errors found by parser." << std::endl;
+    }
 }
 
 // iteratire through 'tokens' and print information to terminal

@@ -168,7 +168,7 @@ bool Scanner::scanVar(long unsigned int& currentLocation, int depth) {
     // if current location is 'v'
         // -> if next location is 'a'
             // -> if last location is 'r'
-                // -> create var token, return true, collapse recursive stack, and subtract currentLocation by 1
+                // -> create var token, return true, collapse recursive stack
     // if any return false, collapse stack, do not make var token, do not change currentLocation
 
     if (currentLocation < currentLine.length() && ((currentLine[currentLocation] == 'v') && (depth == 0))) {
@@ -183,7 +183,6 @@ bool Scanner::scanVar(long unsigned int& currentLocation, int depth) {
         temp.tokenType   = "varSym";
         temp.lexeme      = "var";
         temp.lineNumber  = totalLines;
-        //currentLocation -= 1;
         tokens.push_back(temp);
         return true;
     } else {
