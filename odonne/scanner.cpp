@@ -364,7 +364,7 @@ void Scanner::scan() {
     }
 
     // print all tokens after scanner finishes, comment out if not needed
-    printTokens();
+    //printTokens();
 }
 
 // function the programmer uses for debugging

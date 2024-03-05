@@ -111,7 +111,7 @@ bool Parser::parseVar() {
     for (long unsigned int i = 0; i < tokens.size(); i++) {
         if (tokens.at(i).tokenType == "idenSym") {
             if (tokens.at(i).declared == true) {
-                for (int j = i; j < tokens.size(); j++) {
+                for (long unsigned int j = i; j < tokens.size(); j++) {
                     if (tokens.at(j).lexeme == tokens.at(i).lexeme){
                         tokens.at(j).declared = true;
                     }

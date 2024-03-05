@@ -7,6 +7,7 @@
  *      1. #include
  *      2. int main() {} */
 
+#include "rpn-generator.h"
 #include "scanner.h"
 #include "parser.h"
 
@@ -19,6 +20,8 @@ int main(int argc, char* argv[]) {
             s.scan();
             Parser p(s.getTokens());
             p.parse();
+            RpnGen rpn(s.getTokens());
+            rpn.printRpn();
         }
     } else {
         for (int i = 1; i < argc; ++i) {
@@ -26,6 +29,8 @@ int main(int argc, char* argv[]) {
             s.scan();
             Parser p(s.getTokens());
             p.parse();
+            RpnGen rpn(s.getTokens());
+            rpn.printRpn();
         }
     }
 

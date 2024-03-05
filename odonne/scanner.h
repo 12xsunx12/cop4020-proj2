@@ -24,25 +24,25 @@
 
 class Scanner {
     private:
-        std::unordered_map<char, std::string> opTable;                  // map & keys to all acceptable operators; (, ), {, }, +, -, *, /
-        std::unordered_map<std::string, std::string> keywordTable;      // map & keys to all acceptable keywords; if, else, while, return...
-        std::unordered_set<char> ALPHABET;      // the entire english alphabet, a-z and A-Z
-        std::unordered_set<int> DIGITS;         // 1-9 numbers
-        std::string fileName;                   // name of the source code file
-        std::ifstream ifs;                      // input file stream; read input file
-        std::string currentLine;                // std::getline(ifs, currentLine) ; the `current` line in our source code file
-        int totalLines;                         // count how many lines are in the `source code` file; incremented in `nextLine()`
-        std::vector<Token> tokens;              // vector holding all created tokens
+        std::unordered_map<char, std::string> opTable;
+        std::unordered_map<std::string, std::string> keywordTable;
+        std::unordered_set<char> ALPHABET;
+        std::unordered_set<int> DIGITS;
+        std::string fileName;
+        std::ifstream ifs;
+        std::string currentLine;
+        int totalLines;
+        std::vector<Token> tokens;
 
-        bool openFile();                                // using `fileName`, attempts to open given `source code` file
-        void nextLine();                                // grabs the `next line` in the file and sets it equal to currentLine
-        std::string clean(const std::string& input);    // scrub a string clean of 'white-spaces' and '\n'
+        bool openFile();
+        void nextLine();
+        std::string clean(const std::string& input);
 
-        bool scanOp(long unsigned int& currentLocation);            // current lexeme is an operator
-        bool scanKeyword(long unsigned int& currentLocation);       // current lexeme is a keyword
-        bool scanIdentifier(long unsigned int& currentLocation);    // current lexeme is an identifier
-        bool scanVar(long unsigned int& currentLocation, int depth);           // current lexeme is the 'var' initializer for identifiers
-        bool scanNumber(long unsigned int& currentLocation);        // current lexeme is a number
+        bool scanOp(long unsigned int& currentLocation);
+        bool scanKeyword(long unsigned int& currentLocation);
+        bool scanIdentifier(long unsigned int& currentLocation);
+        bool scanVar(long unsigned int& currentLocation, int depth);
+        bool scanNumber(long unsigned int& currentLocation);
 
         void initAll();             // run all `init` functions
         void initOpTable();         // init. the opTable hashmap
