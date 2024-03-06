@@ -12,11 +12,12 @@
 class RpnGen {
     private:
         std::vector<Token> tokens;
+        std::vector<Token> postfix;
         std::ifstream ifs;
         std::ofstream ofs;
         std::stack<Token> stak;
         int precedence(Token oprater);
-        std::vector<Token> generate();
+        void generate(long unsigned int& i, int depth, Token oprater, Token lVal);
 
     public:
         RpnGen(std::vector<Token> tokens);
