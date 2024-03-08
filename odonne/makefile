@@ -32,3 +32,9 @@ all: $(TARGET)
 		echo "Running with $$file:"; \
 		./$(TARGET) source-code-inputs/$$file; \
 	done
+
+# Target to run the executable with a specific file
+.PHONY: a1 a2 a3 a4 a5 a6 a7 a8
+a1 a2 a3 a4 a5 a6 a7 a8: $(TARGET)
+	@echo "Running with $@:"
+	./$(TARGET) source-code-inputs/$@

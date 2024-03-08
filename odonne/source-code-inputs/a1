@@ -3,4 +3,3 @@ var a; var b;
   a = b;
   a = b+2;
 end.
-
