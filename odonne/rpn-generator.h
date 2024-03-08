@@ -19,7 +19,7 @@ class RpnGen {
         std::ofstream ofs;
         std::stack<Token> stak;
         void initOpTable();
-        void generate(int i, int depth, Token oprater, Token lVal);
+        void generate();
 
     public:
         RpnGen(std::vector<Token> tokens);
