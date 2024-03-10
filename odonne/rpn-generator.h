@@ -21,9 +21,10 @@ class RpnGen {
         void initOpTable();
         void generate();
 
+
     public:
         RpnGen(std::vector<Token> tokens);
-        void run();
+        void runRpnGeneration();
         void printRpn();
         void printRpnToFile();
 };

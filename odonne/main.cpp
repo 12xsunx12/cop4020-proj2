@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
             p.parse();
             p.printTokens();
             RpnGen rpn(s.getTokens());
-            rpn.run();
+            rpn.runRpnGeneration();
             rpn.printRpn();
         }
     } else {
@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
             p.parse();
             p.printTokens();
             RpnGen rpn(s.getTokens());
-            rpn.run();
+            rpn.runRpnGeneration();
             rpn.printRpn();
         }
     }
