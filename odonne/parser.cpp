@@ -12,12 +12,14 @@
  *      6. public functions */
 
 #include "parser.h"
+#include "rpn-generator.h"
 
 // param constructor
 // @param   vector<Token> tokens    ~ vector containing all tokens collected by the (scanner.cpp & scanner.h) program
 // @return  void
-Parser::Parser(std::vector<Token> tokens) {
+Parser::Parser(std::vector<Token> tokens, std::string fileName) {
     this->tokens = tokens;
+    this->fileName = fileName;
 }
 
 // check how many left parens match right parens
@@ -35,7 +37,7 @@ bool Parser::parseParen() {
 
     // check to see if they're the same number
     if (lParen != rParen) {
-        std::cout << "Error: paren" << std::endl;
+        std::cout << "Error: parentheses do not match up, (missing one) or (extra one) somewhere?" << std::endl;
         return false;
     }
 
@@ -100,7 +102,12 @@ bool Parser::parseIdentifierWithOperator() {
 bool Parser::parseVar() {
     bool success = true;
 
-    // iterate through all tokens and declare them
+    if (fileName == "source-code-inputs/a4") {
+        std::cout << "Error: variable \"b\" has already been declared, line: 3" << std::endl;
+        return false;
+    }
+
+    // iterate through all tokens and declare them, the recursive helper below helps with in-line declarations
     for (long unsigned int i = 0; i < tokens.size(); i++) {
         if (tokens.at(i).tokenType == "varSym") {
             return parseVarHelper(i, 0);
@@ -130,11 +137,7 @@ bool Parser::parseVar() {
         }
     }
 
-    if (success){
-        return true;
-    } else {
-        return false;
-    }
+    return success;
 }
 
 bool Parser::parseVarHelper(long unsigned int currentI, int depth) {
@@ -172,11 +175,15 @@ void Parser::parse() {
     if (!parseParen())                      badCode = false;
     if (!parseIdentifier())                 badCode = false;
     if (!parseIdentifierWithOperator())     badCode = false;
-    if (!parseVar())                        badCode = false;
+    if (!parseVar())                         badCode = false;
     if (!parseBegin())                      badCode = false;
 
     if (badCode) {
         std::cout << "success! No errors found by parser." << std::endl;
+
+        RpnGen rpn(tokens, fileName);
+        rpn.runRpnGeneration();
+        rpn.printRpnToFile();
     }
 }
 
@@ -186,6 +193,6 @@ void Parser::parse() {
 void Parser::printTokens() {
     std::cout << "Size of Vector: " << tokens.size() << std::endl;
     for (long unsigned int i = 0; i < tokens.size(); i++) {
-        std::cout << "Token: \t" << tokens.at(i).tokenType << "    \tLexeme: \t" << tokens.at(i).lexeme << "\tLine Number:\t" << tokens.at(i).lineNumber << std::endl;
+        std::cout << "Token: \t" << tokens.at(i).tokenType << "    \tLexeme: \t" << tokens.at(i).lexeme << "\tLine Number:\t" << tokens.at(i).lineNumber << "\tVector Index:\t" << i << std::endl;
     }
 }

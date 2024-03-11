@@ -18,23 +18,15 @@ int main(int argc, char* argv[]) {
             std::cout << fileName << std::endl;
             Scanner s(fileName);
             s.scan();
-            Parser p(s.getTokens());
+            Parser p(s.getTokens(), fileName);
             p.parse();
-            p.printTokens();
-            RpnGen rpn(s.getTokens());
-            rpn.runRpnGeneration();
-            rpn.printRpn();
         }
     } else {
         for (int i = 1; i < argc; ++i) {
             Scanner s(argv[i]);
             s.scan();
-            Parser p(s.getTokens());
+            Parser p(s.getTokens(), argv[i]);
             p.parse();
-            p.printTokens();
-            RpnGen rpn(s.getTokens());
-            rpn.runRpnGeneration();
-            rpn.printRpn();
         }
     }
 

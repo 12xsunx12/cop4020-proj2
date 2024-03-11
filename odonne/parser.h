@@ -26,6 +26,8 @@
 class Parser {
     private:
         std::vector<Token> tokens;
+        std::string fileName;
+
         bool parseParen();
         bool parseIdentifier();
         bool parseIdentifierWithOperator();
@@ -35,7 +37,7 @@ class Parser {
 
 
     public:
-        Parser(std::vector<Token> tokens);
+        Parser(std::vector<Token> tokens, std::string fileName);
         void printTokens();
         void parse(); // run all checks
 };
